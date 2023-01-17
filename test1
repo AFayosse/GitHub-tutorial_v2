@@ -104,5 +104,6 @@ rangestat (min) price mpg (mean) price mpg, interval(rep78 0 0)
 //graph
 gr combine gluc_nodiab.gph gluc_diab.gph   , ycommon //ycommon give axes common scale
 
+//modification n°1
 
 

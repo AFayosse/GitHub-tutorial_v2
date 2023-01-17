@@ -1,0 +1,108 @@
+
+dir //show the table in the file (cd)
+dir *dta //que les tables
+mkdir folder //créer un nouveau dossier
+pwd //the cd in use
+edit //=br
+lookfor //recherche un mot dans la table
+
+tabulation //complète le nom de la variable danc command
+#review n //n: n command you want to show
+
+note or not var //créer une note dans le dataset ou sur une variable précise
+note drop or note drop var //supprimer les notes
+
+rename (v1 v2) (var1 var2)
+rename v# =old //add old au var commençant par v
+rename *old * //remove old au var terminant par old
+rename old* * //remove old au var commençant par old
+
+//1_garder une table entière
+	//must be in a program ....
+use "",clear
+preserve //save the entire table
+keep if 
+save "",replace
+restore //entire table is recover
+
+//BEFORE code omitted
+preserve // preserve user's data
+keep var1 var2 xvar
+save master, replace
+drop var2
+save part1, replace
+use master, clear
+drop var1
+rename var2 var1
+append using part1
+erase master.dta
+erase part1.dta
+//code continues
+
+//AFTER code omitted
+preserve // preserve user's data
+keep var1 var2 xvar
+tempfile master part1 // declare temporary files
+save "`master'"
+drop var2
+save "`part1'"
+use "`master'", clear
+drop var1
+rename var2 var1
+append using "`part1'"
+//code continues; temporary files are not erased
+
+//variable temporaire
+tempvar
+tempname
+tempfile
+
+//manage to make this one work
+snapshot save, label (name)
+snapshop list _all
+*snapshot 1 (name) created at 11 Apr 2018 14:10
+keep if or drop if ...
+snapshot restore 1
+snapshot erase 1 /*or*/ _all
+
+//comparer 2 modèles 
+//model 1
+stset //or
+logit
+fitstat, saving(m1)
+//model 2
+stcox //or
+logit
+fitstat, using(m1)
+
+//macro: foreach & varlist/local
+foreach y of varlist dminglcum {
+tab `y' demence if select1==1,m
+}
+local cox "i.dminglcum c.zgluc_flog c.zinsu_flog c.zhoma1rlog c.zhoma1blog c.zquicki"
+foreach x of local cox {
+stcox i.(sex ethn_ds coh) `x'
+estat phtest,d
+}
+
+//list option
+list var1-var6, sepby(var2 var4) //présence de séparateur  var or digits
+
+//compact table
+tabstat *gluc_f  , by(demence) s(n mean sd) c(s) lo
+
+//
+rangestat (min) price mpg (mean) price mpg, interval(rep78 0 0)
+        
+*SAME AS: redo using egen functions
+        bys rep78: egen min_price  = min(price)
+        bys rep78: egen min_mpg    = min(mpg)
+        bys rep78: egen mean_price = mean(price)
+        bys rep78: egen mean_mpg   = mean(mpg)
+        list rep78 *price* *mpg* if rep78 <= 2, sepby(rep78)
+
+//graph
+gr combine gluc_nodiab.gph gluc_diab.gph   , ycommon //ycommon give axes common scale
+
+
+
